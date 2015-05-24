@@ -19,10 +19,14 @@ fn main() {
         let mut res = try!(client.get(url)
                 .header(Connection::close())
                 .send());
-            
-        let mut body = String::new();
-        try!(res.read_to_string(&mut body));
-        Ok(body)
+
+        if res.status.is_success() {
+            let mut body = String::new();
+            try!(res.read_to_string(&mut body));
+            Ok(body)
+        } else {
+            Err(Error::Status)
+        }
     }
 
     server.get("/api/service", middleware! { |request, response|
@@ -30,14 +34,11 @@ fn main() {
 
         match q.get(&"url".to_string()) {
             Some(url) => {
-                println!("Requesting {}", url);               
                 match get_service(url) {
                     Ok(body) => {
-                        println!("SUCCESS {}", url);               
                         (StatusCode::Ok, body)
                     },
                     Err(err) => {
-                        println!("ERROR {} {}", url, err);               
                         (StatusCode::NotFound, err.to_string())
                     },
                 }
