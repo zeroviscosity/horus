@@ -40,12 +40,15 @@ var ServiceActions = {
             if (err) {
                 console.log('This should not happen.');
             } 
+            
+            var sorted = _.sortBy(services, 'label');
+
             AppDispatcher.dispatch({
                 actionType: Constants.SERVICES_UPDATED,
-                up: _.filter(services, function(service) {
+                up: _.filter(sorted, function(service) {
                     return service.status === 'ok';
                 }),
-                down: _.filter(services, function(service) {
+                down: _.filter(sorted, function(service) {
                     return service.status === 'error';
                 })
             });
