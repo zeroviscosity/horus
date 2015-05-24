@@ -1,0 +1,23 @@
+html, body {
+    font-family: 'Lato', Helvetica, Arial, sans-serif;
+    font-size: 18px;
+}
+
+.service {
+    border-bottom: 1px solid #ccc;
+    padding: 12px 0;
+}
+
+.service .service-status {
+    border-radius: 20px;
+    height: 20px;
+    width: 20px;
+}
+
+.services-up .service .service-status {
+    background: #4caf50;
+}
+
+.services-down .service .service-status {
+    background: #f44336;
+}

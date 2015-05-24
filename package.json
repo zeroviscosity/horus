@@ -1,0 +1,21 @@
+{
+  "name": "horus",
+  "version": "0.1.0",
+  "description": "Service monitoring system",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zeroviscosity/horus.git"
+  },
+  "author": "Kent English",
+  "homepage": "https://github.com/zeroviscosity/horus",
+  "dependencies": {
+    "async": "^1.0.0",
+    "flux": "^2.0.3",
+    "jquery": "^2.1.4",
+    "keymirror": "^0.1.1",
+    "lodash": "^3.9.1",
+    "object-assign": "^2.0.0",
+    "react": "^0.13.3",
+    "reactify": "^1.1.1"
+  }
+}
