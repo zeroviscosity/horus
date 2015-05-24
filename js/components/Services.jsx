@@ -45,7 +45,7 @@ var Services = React.createClass({
             return <Service key={'up-' + i} service={s}/>;
         });
 
-        return (
+        return (up.length || down.length) ? (
             <div className="services">
                 <div className="services-down">
                     {down}
@@ -53,6 +53,13 @@ var Services = React.createClass({
                 <div className="services-up">
                     {up}
                 </div>
+            </div>) : (
+            <div className="spinner">
+                <div className="rect1"></div>
+                <div className="rect2"></div>
+                <div className="rect3"></div>
+                <div className="rect4"></div>
+                <div className="rect5"></div>
             </div>);
     }
 });
