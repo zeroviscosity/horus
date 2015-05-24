@@ -9,7 +9,7 @@ window.HorusConfig = {
             label: 'Example Service',
             url: 'https://api.example.com/api/version',
             parse: function(data) {
-                // Do something with the data
+                // Return something from the data for display purposes
                 return data.version;
             }
         }
