@@ -28,7 +28,7 @@ var Services = React.createClass({
 
         this.timer = setInterval(function() {
             ServiceActions.refresh();
-        }, 180000);
+        }, 60000);
 
         ServiceStore.on(Constants.SERVICES_UPDATED, this.updateState);
     },
