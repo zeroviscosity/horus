@@ -5,31 +5,46 @@ use std::io::Read;
 
 use hyper::Client;
 use hyper::header::Connection;
+use hyper::error::Error;
 
 use nickel::{Nickel, HttpRouter, QueryString, StaticFilesHandler};
+use nickel::status::StatusCode;
 
 fn main() {
     let mut server = Nickel::new();
 
-    server.get("/api/service", middleware! { |request|
-        let q = request.query();
-        
+    fn get_service(url: &str) -> Result<String, Error> {
+        let mut client = Client::new();
+
+        let mut res = try!(client.get(url)
+                .header(Connection::close())
+                .send());
+            
         let mut body = String::new();
+        try!(res.read_to_string(&mut body));
+        Ok(body)
+    }
+
+    server.get("/api/service", middleware! { |request, response|
+        let q = request.query();
 
         match q.get(&"url".to_string()) {
             Some(url) => {
-                let mut client = Client::new();
-
-                let mut res = client.get(url)
-                    .header(Connection::close())
-                    .send().unwrap();
-
-                res.read_to_string(&mut body).unwrap();
+                println!("Requesting {}", url);               
+                match get_service(url) {
+                    Ok(body) => {
+                        println!("SUCCESS {}", url);               
+                        (StatusCode::Ok, body)
+                    },
+                    Err(err) => {
+                        println!("ERROR {} {}", url, err);               
+                        (StatusCode::NotFound, err.to_string())
+                    },
+                }
             },
-            None => body = "Missing query parameter: url".to_string(),
+            None => (StatusCode::BadRequest, 
+                     "Missing query parameter: url".to_string()),
         }
-
-        body
     });
     
     server.utilize(StaticFilesHandler::new("assets"));
