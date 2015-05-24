@@ -1,8 +1,3 @@
-# Horus: Serivce Monitoring System
-
-Create `assets/js/config.js` and add something like this:
-
-```javascript
 window.HorusConfig = {
     services: [
         {
@@ -15,16 +10,4 @@ window.HorusConfig = {
         }
     ]
 };
-```
 
-Compile the js using Browserify and Reactify:
-
-```bash
-browserify -t reactify js/app.jsx -o assets/js/app.js
-```
-
-Start the server:
-
-```bash
-cargo run
-```
