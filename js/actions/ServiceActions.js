@@ -40,7 +40,7 @@ var ServiceActions = {
             if (err) {
                 console.log('This should not happen.');
             } 
-            
+
             var sorted = _.sortBy(services, 'label');
 
             AppDispatcher.dispatch({

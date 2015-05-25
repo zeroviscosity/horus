@@ -24,17 +24,18 @@ var Services = React.createClass({
         };
     },
     componentDidMount: function() {
-        ServiceActions.refresh();
-
-        this.timer = setInterval(function() {
-            ServiceActions.refresh();
-        }, 60000);
-
         ServiceStore.on(Constants.SERVICES_UPDATED, this.updateState);
+        ServiceActions.refresh();
+        this.timer = setInterval(function() {
+            this.updateState();
+            if (Math.round(Date.now() / 1000) % 30 === 0) {
+                ServiceActions.refresh();
+            }
+        }.bind(this), 1000);
     },
     componentWillUnmount: function() {
-        clearInterval(this.timer);
         ServiceStore.removeListener(Constants.SERVICES_UPDATED, this.updateState);
+        clearInterval(this.timer);
     },
     render: function() {
         var down = _.map(this.state.down, function(s, i) {

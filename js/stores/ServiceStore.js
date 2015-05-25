@@ -8,6 +8,7 @@ var AppDispatcher = require('../dispatcher/AppDispatcher');
 
 var _up = [];
 var _down = [];
+var _lastSeen = {};
 
 var ServicesStore = assign({}, EventEmitter.prototype, {
     getUp: function() {
@@ -15,7 +16,16 @@ var ServicesStore = assign({}, EventEmitter.prototype, {
     },
     getDown: function() {
         return _down;
+    },
+    getLastSeen: function(label) {
+        if (!_lastSeen[label]) return '-';
+        var diff = Date.now() - _lastSeen[label];
+        return Math.round(diff / 1000) + 's';
     }
+});
+
+_.each(window.HorusConfig.services, function(s) {
+    _lastSeen[s.label] = 0;
 });
 
 AppDispatcher.register(function(action) {
@@ -29,6 +39,9 @@ AppDispatcher.register(function(action) {
                 _down = action.down;
                 ServicesStore.emit(Constants.SERVICES_UPDATED);
             }
+            _.each(_up, function(s) {
+                _lastSeen[s.label] = Date.now();
+            });
             break;
     }
 });
