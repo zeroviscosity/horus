@@ -1,7 +1,10 @@
-#[macro_use] extern crate nickel;
+extern crate chrono;
 extern crate hyper;
+#[macro_use] extern crate nickel;
 
 use std::io::Read;
+
+use chrono::Local;
 
 use hyper::Client;
 use hyper::header::Connection;
@@ -29,6 +32,15 @@ fn main() {
         }
     }
 
+    server.utilize(middleware! { |request|
+        let dt = Local::now();
+        println!("{}: {:?}", dt, request.origin.uri);
+    });
+
+    server.get("/api/status", middleware! {
+        "{ \"status\": \"ok\" }"
+    });
+
     server.get("/api/service", middleware! { |request, response|
         let q = request.query();
 
@@ -43,13 +55,13 @@ fn main() {
                     },
                 }
             },
-            None => (StatusCode::BadRequest, 
+            None => (StatusCode::BadRequest,
                      "Missing query parameter: url".to_string()),
         }
     });
-    
+
     server.utilize(StaticFilesHandler::new("assets"));
-    
+
     server.listen("127.0.0.1:6767");
 }
 

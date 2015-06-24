@@ -6,6 +6,7 @@ var Constants = require('../constants');
 
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 
+var _available = true;
 var _up = [];
 var _down = [];
 var _lastSeen = {};
@@ -21,6 +22,9 @@ var ServicesStore = assign({}, EventEmitter.prototype, {
         if (!_lastSeen[label]) return '-';
         var diff = Date.now() - _lastSeen[label];
         return Math.round(diff / 1000) + 's';
+    },
+    isAvailable: function() {
+        return _available;
     }
 });
 
@@ -31,6 +35,7 @@ _.each(window.HorusConfig.services, function(s) {
 AppDispatcher.register(function(action) {
     switch (action.actionType) {
         case Constants.SERVICES_UPDATED:
+            _available = true;
             if (changed(_up, action.up) || changed(_down, action.down)) {
                 if (!_.isEmpty(_.difference(labels(action.down), labels(_down)))) {
                     ServicesStore.emit(Constants.SERVICES_DOWN);
@@ -42,6 +47,10 @@ AppDispatcher.register(function(action) {
             _.each(_up, function(s) {
                 _lastSeen[s.label] = Date.now();
             });
+            break;
+        case Constants.SERVICES_UNAVAILABLE:
+            _available = false;
+            ServicesStore.emit(Constants.SERVICES_UPDATED);
             break;
     }
 });

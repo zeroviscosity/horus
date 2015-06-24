@@ -13,18 +13,21 @@ var Services = React.createClass({
     timer: null,
     updateState: function() {
         this.setState({
+            available: ServiceStore.isAvailable(),
             up: ServiceStore.getUp(),
             down: ServiceStore.getDown()
         });
     },
     getInitialState: function() {
         return {
+            available: ServiceStore.isAvailable(),
             up: ServiceStore.getUp(),
             down: ServiceStore.getDown()
         };
     },
     componentDidMount: function() {
         ServiceStore.on(Constants.SERVICES_UPDATED, this.updateState);
+
         ServiceActions.refresh();
         this.timer = setInterval(function() {
             this.updateState();
@@ -38,6 +41,8 @@ var Services = React.createClass({
         clearInterval(this.timer);
     },
     render: function() {
+        var warning = (this.state.available) ? null : <h2 className="center">Service Unavailable...</h2>;
+
         var down = _.map(this.state.down, function(s, i) {
             return <Service key={'down-' + i} service={s}/>;
         });
@@ -48,6 +53,7 @@ var Services = React.createClass({
 
         return (up.length || down.length) ? (
             <div className="services">
+                {warning}
                 <div className="services-down">
                     {down}
                 </div>
